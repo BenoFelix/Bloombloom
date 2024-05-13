@@ -25,8 +25,9 @@ def load_user(user_id):
 
 
 def mail(email, content, sub):
-    MY_EMAIL = "testappmail2023@gmail.com"
-    MY_PASSWORD = "pufazlkacbfitzjn"
+    # mail and app password was removed for security purpose
+    MY_EMAIL = ""
+    MY_PASSWORD = ""
     with smtplib.SMTP("smtp.gmail.com") as connection:
         connection.starttls()
         connection.login(MY_EMAIL, MY_PASSWORD)
