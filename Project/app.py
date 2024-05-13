@@ -25,7 +25,7 @@ def load_user(user_id):
 
 
 def mail(email, content, sub):
-    # mail and app password was removed for security purpose
+    # Email and password was removed.
     MY_EMAIL = ""
     MY_PASSWORD = ""
     with smtplib.SMTP("smtp.gmail.com") as connection:
@@ -135,7 +135,7 @@ def deposit():
             db.session.add(transaction)
             db.session.commit()
             flash('Deposit successful!', 'success')
-            return redirect(url_for('home'))
+            return redirect(url_for('transaction'))
     return render_template('deposit.html')
 
 
@@ -158,7 +158,7 @@ def withdraw():
                 db.session.add(transaction)
                 db.session.commit()
                 flash('Withdrawal successful!', 'success')
-                return redirect(url_for('home'))
+                return redirect(url_for('transaction'))
         else:
             flash('Password you have entered was wrong!!', 'error')
     return render_template('withdraw.html')
@@ -188,7 +188,7 @@ def transfer():
                 db.session.add(transaction)
                 db.session.commit()
                 flash('Transfer successful!', 'success')
-                return redirect(url_for('home'))
+                return redirect(url_for('transaction'))
         else:
             flash('Password you have entered was wrong!!', 'error')
     return render_template('transfer.html')
