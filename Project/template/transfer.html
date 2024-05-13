@@ -1,0 +1,50 @@
+{% extends 'base.html'%}
+{%block title%}
+<title>Transfer</title>
+    {%endblock%}
+{% block content %}
+<script>
+    function validatetransferForm(){
+        var email = document.getElementById("email").value;
+        var amount = document.getElementById("transfer_amount").value;
+        var errorMessage = document.getElementById('error-message');
+        if (!amount.match(/^\d+$/)) {
+            errorMessage.textContent = "Please enter a positive integer amount.";
+            return false;
+        }
+
+        var emailRegex = /\S+@\S+\.\S+/;
+        if (!emailRegex.test(email)) {
+            document.getElementById("email-error").innerHTML = "Invalid email format";
+            return false;
+        } else {
+            document.getElementById("email-error").innerHTML = "";
+        }
+
+        return true;
+    }
+    }
+</script>
+<div class="container">
+    <h1 align="center">Transfer</h1>
+    <form id="withdraw-form" method="post" onsubmit="return validatetransferForm">
+        <div class="mb-3">
+            <label for="email" class="form-label">Receiver Email</label>
+            <input type="text" class="form-control" name="email" id="email" placeholder="Enter the email of receiver">
+            <div id="email-error" style="color: red;"></div>
+        </div>
+        <div class="mb-3">
+            <label for="transfer_amount" class="form-label">Amount</label>
+            <input type="text" class="form-control" name="transfer_amount" id="transfer_amount" placeholder="Enter the amount to transfer">
+            <div id="error-message" style="color: red;"></div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" name="psw" id="password" placeholder="Enter the Password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Transfer</button>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html'%}
+{%block title%}
+<title>Withdraw</title>
+    {%endblock%}
+{% block content %}
+<script>
+    function validateForm(formId, inputId, confirmationMessage) {
+    var amount = document.getElementById(inputId).value;
+    var errorMessage = document.getElementById('error-message');
+    if (!amount.match(/^\d+$/)) {
+        errorMessage.textContent = "Please enter a positive integer amount.";
+        return false;
+    }
+
+    var confirmation = confirm(confirmationMessage);
+    if (!confirmation) {
+        return false;
+    }
+
+    return true;
+}
+</script>
+<div class="container">
+    <h1 align="center">Withdraw</h1>
+    <form id="withdraw-form" method="post" onsubmit="return validateForm('withdraw-form', 'withdraw', 'Did you want to withdraw this amount?')">
+        <div class="mb-3">
+            <label for="withdraw" class="form-label">Amount</label>
+            <input type="text" class="form-control" name="withdraw_amount" id="withdraw" placeholder="Enter the amount to withdraw">
+            <div id="error-message" style="color: red;"></div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" name="psw" id="password" placeholder="Enter the Password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Withdraw</button>
+    </form>
+</div>
+
+
+{% endblock %}

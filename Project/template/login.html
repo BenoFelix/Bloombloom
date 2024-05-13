@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.css"
+      rel="stylesheet"
+    />
+<script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"
+></script>
+
+</head>
+<body>
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" onclick="closeAlert(this)">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+  <script>
+
+      function closeAlert(alertElement) {
+        alertElement.classList.remove("show");
+        setTimeout(function() {
+            alertElement.style.display = "none";
+        }, 500);
+      }
+
+      function validateloginForm() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("inputPassword6").value;
+
+            // Email validation
+        var emailRegex = /\S+@\S+\.\S+/;
+        if (!emailRegex.test(email)) {
+            document.getElementById("email-error").innerHTML = "Invalid email format";
+            return false;
+        } else {
+            document.getElementById("email-error").innerHTML = "";
+        }
+
+            // Password length validation
+        if (password.length < 8 || password.length > 20) {
+            alert("Password must be 8-20 characters long.");
+                return false;
+        }
+
+        return true;
+    }
+function showPassword() {
+    var passwordField = document.getElementById("inputPassword6");
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+    } else {
+        passwordField.type = "password";
+    }
+}
+  </script>
+<br><br><br>
+<div class="container">
+    <div class="card" style="height: auto;">
+        <div class="card-body">
+            <h1 align="center">Login</h1>
+            <form id="login-form" method="post" onsubmit="return validateloginForm()" action="{{url_for('login')}}">
+                <div class="mb-3">
+                    <div class="col-auto">
+                        <label for="email" class="col-form-label">Email</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Enter the Email" required>
+                        <div id="email-error" style="color: red;"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">Password</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="password" name='password' id="inputPassword6" placeholder="Password" class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <input type="checkbox" onclick="showPassword()"> Show Password
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+    <br>
+    <h5 align="center">If you don't have the account <a href="{{url_for('signup')}}">Register</a></h5>
+</div>
+
+
+</body>
+</html>

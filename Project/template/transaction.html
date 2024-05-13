@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+{%block title%}
+<title>Transaction History</title>
+    {%endblock%}
+{% block content %}
+<h1 align="center">Transaction History</h1>
+<br><br>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Serial Number</th>
+      <th scope="col">Transaction ID</th>
+      <th scope="col">Sender ID</th>
+      <th scope="col">Receiver ID</th>
+      <th scope="col">Type</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Date & Time</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in data %}
+    <tr>
+      <th scope="row">{{ loop.index }}</th>
+      <td>{{ row[0] }}</td>
+      <td>{{ row[1] }}</td>
+      <td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td>
+      {% if row[3] == "deposit" or (row[3] == 'transfer' and row[2] == current_user.id) %}
+      <td style="color: green;">{{ row[4] }} ↑</td>
+      {% elif row[3] == "withdraw" or (row[3] == 'transfer' and row[1] == current_user.id) %}
+      <td style="color: red;">{{ row[4] }} ↓</td>
+      {% endif %}
+      <td>{{ row[5].strftime("%Y-%m-%d %H:%M:%S") }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

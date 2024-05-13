@@ -1,0 +1,34 @@
+{% extends 'base.html'%}
+{%block title%}
+<title>Deposit</title>
+    {%endblock%}
+{% block content %}
+<script>
+    function validateForm(formId, inputId, confirmationMessage) {
+    var amount = document.getElementById(inputId).value;
+    var errorMessage = document.getElementById('error-message');
+    if (!amount.match(/^\d+$/)) {
+        errorMessage.textContent = "Please enter a positive integer amount.";
+        return false;
+    }
+
+    var confirmation = confirm(confirmationMessage);
+    if (!confirmation) {
+        return false;
+    }
+
+    return true;
+}
+</script>
+<div class="container">
+    <h1 align="center">Deposit</h1>
+    <form id="deposit-form" method="post" onsubmit="return validateForm('deposit-form', 'deposit', 'Did you want to deposit this amount?')">
+        <div class="mb-3">
+            <label for="deposit" class="form-label">Amount</label>
+            <input type="text" class="form-control" name="deposit" id="deposit" placeholder="Enter the amount to deposit">
+            <div id="error-message" style="color: red;"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Deposit</button>
+    </form>
+</div>
+{% endblock %}
