@@ -12,7 +12,7 @@ from sqlalchemy import or_
 app = Flask(__name__, template_folder='template')
 bcrypt = Bcrypt(app)
 app.config['SECRET_KEY'] = "e9f72b93cea98af52710f2c9bcf338f4d6f7b93f5b40117d08e646606a733e1f0c078c6b872e040992bded944ea123a1ac9451e7f58a4593d57ccdcda9edb84a"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Beno123@localhost/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///extract.db'
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
