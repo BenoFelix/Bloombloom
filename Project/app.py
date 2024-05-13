@@ -1,3 +1,4 @@
+# importing modules
 from flask import Flask, render_template, redirect, request, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
@@ -9,11 +10,13 @@ import string
 import secrets
 from sqlalchemy import or_
 
+# Flask app initialization
 app = Flask(__name__, template_folder='template')
 bcrypt = Bcrypt(app)
 app.config['SECRET_KEY'] = "e9f72b93cea98af52710f2c9bcf338f4d6f7b93f5b40117d08e646606a733e1f0c078c6b872e040992bded944ea123a1ac9451e7f58a4593d57ccdcda9edb84a"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///extract.db'
-db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///extract.db' # Database linking
+db = SQLAlchemy(app) # initializing database
+# To handle and manage the logging in of user
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -23,13 +26,13 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
-
+# sending emails automatically whenever needed
 def mail(email, content, sub):
     # Email and password was removed.
     MY_EMAIL = ""
     MY_PASSWORD = ""
     with smtplib.SMTP("smtp.gmail.com") as connection:
-        connection.starttls()
+        connection.starttls() # connect with gmail smtp server
         connection.login(MY_EMAIL, MY_PASSWORD)
         message = f"Subject:{sub}\n\n{content}"
         message = message.encode('utf-8')
@@ -39,13 +42,13 @@ def mail(email, content, sub):
             msg=message
         )
 
-
+# Generating 8 digit password while creating an account
 def generate_password(length=8):
     characters = string.ascii_letters + string.digits + string.punctuation
     password = ''.join(secrets.choice(characters) for _ in range(length))
     return password
 
-
+# Database table for storing transaction
 class Transactions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
@@ -54,7 +57,7 @@ class Transactions(db.Model):
     amount = db.Column(db.Float, nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.now(timezone('Asia/Kolkata')))
 
-
+# Database table for storing user datas
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -70,7 +73,7 @@ class Users(db.Model, UserMixin):
     def __repr__(self):
         return f'<User {self.email}>'
 
-
+# Handle login page
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -78,15 +81,15 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        user = Users.query.filter_by(email=email).first()
-        if user and bcrypt.check_password_hash(user.psw, password):
+        user = Users.query.filter_by(email=email).first() # get user data from database by matching with email 
+        if user and bcrypt.check_password_hash(user.psw, password): # check the password with the database
             login_user(user)
             return redirect(url_for('home'))
         else:
             flash('Invalid email or password.', 'error')
     return render_template('login.html')
 
-
+# Handle signup page
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -95,7 +98,7 @@ def signup():
         password = generate_password()
 
         existing_user = Users.query.filter_by(email=email).first()
-        if existing_user:
+        if existing_user: # check whether the account is available
             flash('Email already exists. Please choose a different one.', 'error')
             return redirect(url_for('signup'))
         msg = (f"Congratulation, Your account has been Created Successfully\n"
@@ -103,10 +106,10 @@ def signup():
                f"Don't Share the Password with anyone.")
         subject = "Your account has been created successfully!"
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8') # encrypt the paswword
         new_user = Users(name=name, email=email, psw=hashed_password)
         db.session.add(new_user)
-        db.session.commit()
+        db.session.commit() # adding to database
         mail(request.form['email'], msg, subject)
 
         flash('Account created successfully! Please log in.', 'success')
@@ -114,13 +117,13 @@ def signup():
 
     return render_template('signup.html')
 
-
+# Handle home page
 @login_required
 @app.route('/index')
 def home():
     return render_template('index.html')
 
-
+# Handle deposit page
 @login_required
 @app.route('/deposit', methods=['GET', 'POST'])
 def deposit():
@@ -138,7 +141,7 @@ def deposit():
             return redirect(url_for('transaction'))
     return render_template('deposit.html')
 
-
+# Handle withdraw page
 @login_required
 @app.route('/withdraw', methods=['GET', 'POST'])
 def withdraw():
@@ -163,7 +166,7 @@ def withdraw():
             flash('Password you have entered was wrong!!', 'error')
     return render_template('withdraw.html')
 
-
+# handle transfer page
 @login_required
 @app.route('/transfer', methods=['GET', 'POST'])
 def transfer():
@@ -193,7 +196,7 @@ def transfer():
             flash('Password you have entered was wrong!!', 'error')
     return render_template('transfer.html')
 
-
+# handle transaction history page
 @login_required
 @app.route('/transaction')
 def transaction():
@@ -211,7 +214,7 @@ def transaction():
         data.append((id, send, receive, type, amount, time))
     return render_template('transaction.html', data=data)
 
-
+# Handle logout
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -219,7 +222,7 @@ def logout():
     flash("You Have Been Logged Out!")
     return redirect(url_for('login'))
 
-
+# handle dashboard page
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
@@ -229,5 +232,5 @@ def dashboard():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+        db.create_all() # create table in database
+    app.run() # run app
